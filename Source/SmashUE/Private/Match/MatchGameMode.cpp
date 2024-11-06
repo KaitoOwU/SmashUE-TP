@@ -43,6 +43,7 @@ void AMatchGameMode::SpawnCharacters(const TArray<AArenaPlayerStart*>& SpawnPoin
 
 		if(NewCharacter == nullptr) continue;
 		NewCharacter->AutoPossessPlayer = InputType;
+		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 		
 		CharactersInsideArea.Add(NewCharacter);
