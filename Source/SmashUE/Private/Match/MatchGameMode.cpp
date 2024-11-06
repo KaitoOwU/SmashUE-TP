@@ -2,6 +2,7 @@
 
 
 #include "Match/MatchGameMode.h"
+#include "Characters/SmashCharacter.h"
 #include "Arena/ArenaPlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -25,11 +26,44 @@ void AMatchGameMode::BeginPlay()
 
 	TArray<AArenaPlayerStart*> PlayerStartsPoints;
 	FindPlayerStartActorsInArena(PlayerStartsPoints);
+	SpawnCharacters(PlayerStartsPoints);
+}
 
-	for(AArenaPlayerStart* PlayerStartPoint : PlayerStartsPoints)
+void AMatchGameMode::SpawnCharacters(const TArray<AArenaPlayerStart*>& SpawnPoints)
+{
+	for(AArenaPlayerStart* SpawnPoint : SpawnPoints)
 	{
-		GEngine->AddOnScreenDebugMessage(
-			-1, 3.f, FColor::Cyan, PlayerStartPoint->GetFName().ToString());
+		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
+		TSubclassOf<ASmashCharacter> SmashCharacterClass = GetSmashCharacterClassFromInputType(InputType);
+		if(SmashCharacterClass == nullptr) continue;
+
+		ASmashCharacter* NewCharacter = GetWorld()->SpawnActorDeferred<ASmashCharacter>(
+			SmashCharacterClass,
+			SpawnPoint->GetTransform());
+
+		if(NewCharacter == nullptr) continue;
+		NewCharacter->AutoPossessPlayer = InputType;
+		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
+		
+		CharactersInsideArea.Add(NewCharacter);
+	}
+}
+
+
+TSubclassOf<ASmashCharacter> AMatchGameMode::GetSmashCharacterClassFromInputType(EAutoReceiveInput::Type InputType) const
+{
+	switch(InputType)
+	{
+		case EAutoReceiveInput::Player0:
+			return SmashCharacterClassP0;
+		case EAutoReceiveInput::Player1:
+			return SmashCharacterClassP1;
+		case EAutoReceiveInput::Player2:
+			return SmashCharacterClassP2;
+		case EAutoReceiveInput::Player3:
+			return SmashCharacterClassP3;
+		default:
+			return nullptr;
 	}
 }
 
