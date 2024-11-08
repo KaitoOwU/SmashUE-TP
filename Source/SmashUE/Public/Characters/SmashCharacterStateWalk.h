@@ -7,11 +7,14 @@
 #include "SmashCharacterStateWalk.generated.h"
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(SmashCharacterState), meta=(BlueprintSpawnableComponent))
 class SMASHUE_API USmashCharacterStateWalk : public USmashCharacterState
 {
 	GENERATED_BODY()
 
 public:
 	virtual ESmashCharacterStateID GetStateID();
+
+	virtual void StateEnter(ESmashCharacterStateID PreviousStateID) override;
+	virtual void StateExit(ESmashCharacterStateID NextStateID) override;
 };
