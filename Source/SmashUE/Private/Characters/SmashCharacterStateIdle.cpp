@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Characters/SmashCharacterStateIdle.h"
-#include "Characters/SmashCharacteStateID.h"
+#include "Characters/SmashCharacterStateID.h"
 
 
 ESmashCharacterStateID USmashCharacterStateIdle::GetStateID()
@@ -29,5 +29,10 @@ void USmashCharacterStateIdle::StateExit(ESmashCharacterStateID NextStateID)
 		3.f,
 		FColor::Red,
 		TEXT("Exit State Idle"));
+}
+
+void USmashCharacterStateIdle::StateTick(float DeltaTime)
+{
+	Super::StateTick(DeltaTime);
 }
 

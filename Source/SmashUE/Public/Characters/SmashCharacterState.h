@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/SmashCharacteStateID.h"
+#include "Characters/SmashCharacterStateID.h"
 #include "Components/ActorComponent.h"
 #include "SmashCharacterState.generated.h"
 
@@ -23,6 +23,7 @@ public:
 	virtual void StateInit(USmashCharacterStateMachine* InStateMachine);
 	virtual void StateEnter(ESmashCharacterStateID PreviousStateID);
 	virtual void StateExit(ESmashCharacterStateID NextStateID);
+	virtual void StateTick(float DeltaTime);
 
 protected:
 	UPROPERTY()
@@ -30,4 +31,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USmashCharacterStateMachine> StateMachine;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAnimMontage> AssiociatedMontage;
 };

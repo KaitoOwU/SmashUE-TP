@@ -4,7 +4,7 @@
 #include "Characters/SmashCharacterStateMachine.h"
 #include "Characters/SmashCharacter.h"
 #include "Characters/SmashCharacterState.h"
-#include "Characters/SmashCharacteStateID.h"
+#include "Characters/SmashCharacterStateID.h"
 
 void USmashCharacterStateMachine::Init(ASmashCharacter* InCharacter)
 {
@@ -72,5 +72,12 @@ void USmashCharacterStateMachine::ChangeState(ESmashCharacterStateID NextStateID
 		CurrentState->StateEnter(PreviousStateID);
 	}
 }
+
+void USmashCharacterStateMachine::Tick(float DeltaTime)
+{
+	if(CurrentState == nullptr) return;
+	CurrentState->StateTick(DeltaTime);
+}
+
 
 

@@ -2,8 +2,8 @@
 
 
 #include "Characters/SmashCharacter.h"
-
 #include "Characters/SmashCharacterStateMachine.h"
+#include "EnhancedInputSubsystems.h"
 
 // Sets default values
 ASmashCharacter::ASmashCharacter()
@@ -25,7 +25,8 @@ void ASmashCharacter::BeginPlay()
 // Called every frame
 void ASmashCharacter::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);	
+	TickStateMachine(DeltaTime);
 	RotateMeshUsingOrientX();
 }
 
@@ -33,6 +34,7 @@ void ASmashCharacter::Tick(float DeltaTime)
 void ASmashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	SetupMappingContextIntoController();
 }
 
 float ASmashCharacter::GetOrientX() const
@@ -57,11 +59,33 @@ void ASmashCharacter::CreateStateMachine()
 	StateMachine = NewObject<USmashCharacterStateMachine>(this);
 }
 
+void ASmashCharacter::TickStateMachine(float DeltaTime) const
+{
+	if(StateMachine == nullptr) return;
+	StateMachine->Tick(DeltaTime);
+}
+
 void ASmashCharacter::InitStateMachine()
 {
 	if(StateMachine == nullptr) return;
 	StateMachine->Init(this);
 }
+
+void ASmashCharacter::SetupMappingContextIntoController() const
+{
+	 APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if(PlayerController == nullptr) return;
+
+	ULocalPlayer* Player = PlayerController->GetLocalPlayer();
+	if(Player == nullptr) return;
+
+	UEnhancedInputLocalPlayerSubsystem* InputSystem = Player->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if(InputSystem == nullptr) return;
+
+	InputSystem->AddMappingContext(InputMappingContext, 0);
+}
+
+
 
 
 

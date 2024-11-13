@@ -30,6 +30,20 @@ void AMatchGameMode::BeginPlay()
 	SpawnCharacters(PlayerStartsPoints);
 }
 
+USmashCharacterInputData* AMatchGameMode::LoadInputDataFromConfig()
+{
+	const USmashCharacterSettings* CharacterSettings = GetDefault<USmashCharacterSettings>();
+	if(CharacterSettings == nullptr) return nullptr;
+	return CharacterSettings->InputData.LoadSynchronous();
+}
+
+UInputMappingContext* AMatchGameMode::LoadInputMappingContextFromConfig()
+{
+	const USmashCharacterSettings* CharacterSettings = GetDefault<USmashCharacterSettings>();
+	if(CharacterSettings == nullptr) return nullptr;
+	return CharacterSettings->InputMappingContext.LoadSynchronous();
+}
+
 void AMatchGameMode::SpawnCharacters(const TArray<AArenaPlayerStart*>& SpawnPoints)
 {
 	for(AArenaPlayerStart* SpawnPoint : SpawnPoints)

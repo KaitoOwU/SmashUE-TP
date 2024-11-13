@@ -1,7 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Characters/SmashCharacterStateWalk.h"
-#include "Characters/SmashCharacteStateID.h"
+
+#include "Characters/SmashCharacter.h"
+#include "Characters/SmashCharacterStateID.h"
 
 ESmashCharacterStateID USmashCharacterStateWalk::GetStateID()
 {
@@ -28,4 +30,11 @@ void USmashCharacterStateWalk::StateExit(ESmashCharacterStateID NextStateID)
 		3.f,
 		FColor::Red,
 		TEXT("Exit State Walk"));
+}
+
+void USmashCharacterStateWalk::StateTick(float DeltaTime)
+{
+	Super::StateTick(DeltaTime);
+
+	Character->SetActorLocation(Character->GetActorLocation() + Character->GetActorForwardVector() * MoveSpeedMax * DeltaTime);
 }
