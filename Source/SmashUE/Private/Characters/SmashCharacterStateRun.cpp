@@ -4,6 +4,7 @@
 #include "Characters/SmashCharacter.h"
 #include "Characters/SmashCharacterStateID.h"
 #include "Characters/SmashCharacterStateMachine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ESmashCharacterStateID USmashCharacterStateRun::GetStateID()
 {
@@ -13,6 +14,8 @@ ESmashCharacterStateID USmashCharacterStateRun::GetStateID()
 void USmashCharacterStateRun::StateEnter(ESmashCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
+
+	Character->GetCharacterMovement()->MaxWalkSpeed = RunSpeedMax;
 
 	GEngine->AddOnScreenDebugMessage(
 		-1,
@@ -41,7 +44,14 @@ void USmashCharacterStateRun::StateTick(float DeltaTime)
 		StateMachine->ChangeState(ESmashCharacterStateID::Walk);
 	} else
 	{
-		Character->SetOrientX(Character->GetInputMoveX());
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX() * RunSpeedMax * DeltaTime);
+		Character->SetOrientX(FMathf::Sign(Character->GetInputMoveX()) * 1);
+		
+		float MoveX = Character->GetInputMoveX();
+		Character->AddMovementInput(FVector::ForwardVector, MoveX);
+	}
+
+	if(Character->GetInputJump() > GetDefault<USmashCharacterSettings>()->InputJumpThreshold)
+	{
+		StateMachine->ChangeState(ESmashCharacterStateID::Jump);
 	}
 }

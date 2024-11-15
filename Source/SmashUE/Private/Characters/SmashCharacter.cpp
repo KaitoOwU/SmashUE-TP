@@ -5,6 +5,7 @@
 #include "Characters/SmashCharacterStateMachine.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraWorldSubsystem.h"
 
 // Sets default values
 ASmashCharacter::ASmashCharacter()
@@ -21,6 +22,8 @@ void ASmashCharacter::BeginPlay()
 	CreateStateMachine();
 
 	InitStateMachine();
+
+	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 }
 
 // Called every frame
@@ -41,6 +44,7 @@ void ASmashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	if(EnhancedInputComponent == nullptr) return;
 
 	BindInputMoveXAxisAndActions(EnhancedInputComponent);
+	BindInputJump(EnhancedInputComponent);
 }
 
 float ASmashCharacter::GetOrientX() const
@@ -69,12 +73,6 @@ void ASmashCharacter::TickStateMachine(float DeltaTime) const
 {
 	if(StateMachine == nullptr) return;
 	StateMachine->Tick(DeltaTime);
-
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		DeltaTime,
-		FColor::Purple,
-		FString::Printf(TEXT("Value : %f"), GetInputMoveX()));
 }
 
 void ASmashCharacter::InitStateMachine()
@@ -104,7 +102,7 @@ float ASmashCharacter::GetInputMoveX() const
 
 void ASmashCharacter::BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
-	if(InputData == nullptr) return;
+		if(InputData == nullptr) return;
 
 	if(InputData->InputActionMoveX)
 	{
@@ -126,11 +124,62 @@ void ASmashCharacter::BindInputMoveXAxisAndActions(UEnhancedInputComponent* Enha
 			this,
 			&ASmashCharacter::OnInputMoveX);
 	}
+
+	if(InputData->InputActionMoveXFast)
+	{
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveXFast,
+			ETriggerEvent::Triggered,
+			this,
+			&ASmashCharacter::OnInputMoveXFast);
+	}
 }
 
 void ASmashCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
 	InputMoveX = InputActionValue.Get<float>();
+}
+
+void ASmashCharacter::OnInputMoveXFast(const FInputActionValue& InputActionValue)
+{
+	InputMoveX = InputActionValue.Get<float>();
+	InputMoveXFastEvent.Broadcast(InputMoveX);
+}
+
+float ASmashCharacter::GetInputJump() const
+{
+	return InputJump;
+}
+
+void ASmashCharacter::BindInputJump(UEnhancedInputComponent* EnhancedInputComponent)
+{
+
+	if(InputData->InputActionJump)
+	{
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionJump,
+			ETriggerEvent::Started,
+			this,
+			&ASmashCharacter::OnInputJump);
+		
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionJump,
+			ETriggerEvent::Triggered,
+			this,
+			&ASmashCharacter::OnInputJump);
+
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionJump,
+			ETriggerEvent::Completed,
+			this,
+			&ASmashCharacter::OnInputJump);
+	}
+	
+}
+
+void ASmashCharacter::OnInputJump(const FInputActionValue& InputActionValue)
+{
+	InputJump = InputActionValue.Get<float>();
 }
 
 

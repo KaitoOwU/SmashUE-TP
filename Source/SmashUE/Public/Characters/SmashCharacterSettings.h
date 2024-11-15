@@ -6,6 +6,7 @@
 #include "SmashCharacterInputData.h"
 #include "Engine/DeveloperSettings.h"
 #include "InputMappingContext.h"
+#include "SmashCharacterStateIdle.h"
 #include "SmashCharacterSettings.generated.h"
 
 /**
@@ -22,5 +23,10 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	TSoftObjectPtr<UInputMappingContext> InputMappingContext;
-	
+
+	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
+	float InputMoveXThreshold;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
+	float InputJumpThreshold;
 };
