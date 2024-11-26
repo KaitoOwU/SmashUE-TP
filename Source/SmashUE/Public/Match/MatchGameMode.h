@@ -30,6 +30,8 @@ private:
 	void SpawnCharacters(const TArray<AArenaPlayerStart*>& SpawnPoints);
 	TSubclassOf<ASmashCharacter> GetSmashCharacterClassFromInputType(EAutoReceiveInput::Type InputType) const;
 
+	void CreateAndInitPlayers() const;
+
 protected:
 	UPROPERTY()
 	TArray<ASmashCharacter*> CharactersInsideArea;

@@ -2,6 +2,8 @@
 
 
 #include "Match/MatchGameMode.h"
+
+#include "LocalMultiplayerSubsystem.h"
 #include "Characters/SmashCharacter.h"
 #include "Arena/ArenaPlayerStart.h"
 #include "Arena/ArenaSettings.h"
@@ -24,6 +26,7 @@ void AMatchGameMode::FindPlayerStartActorsInArena(TArray<AArenaPlayerStart*>& Re
 void AMatchGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	CreateAndInitPlayers();
 
 	TArray<AArenaPlayerStart*> PlayerStartsPoints;
 	FindPlayerStartActorsInArena(PlayerStartsPoints);
@@ -88,6 +91,17 @@ TSubclassOf<ASmashCharacter> AMatchGameMode::GetSmashCharacterClassFromInputType
 		default:
 			return nullptr;
 	}
+}
+
+void AMatchGameMode::CreateAndInitPlayers() const
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if(GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if(LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
 }
 
 
